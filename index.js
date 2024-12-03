@@ -15,7 +15,6 @@ const database = client.db('common-cultancy');
 MongoClient.connect("mongodb://localhost:27017", { useUnifiedTopology: true })
     .then((client) => {
         console.log("Connected to MongoDB!");
-        database;
     });
 
 const classification = database.collection('classification');
@@ -26,3 +25,7 @@ const time = database.collection('time');
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+app.get('/test', (req, res) => {
+    res.send('It works')
+})
