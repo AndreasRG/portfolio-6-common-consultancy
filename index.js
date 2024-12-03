@@ -1,3 +1,7 @@
+//npm install cors --save
+//npm install express --save
+//npm install mongodb --save
+
 const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require("mongodb");
@@ -10,9 +14,9 @@ const database = client.db('common-cultancy');
 
 MongoClient.connect("mongodb://localhost:27017", { useUnifiedTopology: true })
     .then((client) => {
-        console.log("Connected to MongoDB");
+        console.log("Connected to MongoDB!");
         database;
-    })
+    });
 
 const classification = database.collection('classification');
 const metrics = database.collection('metrics');
