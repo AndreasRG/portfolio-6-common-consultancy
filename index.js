@@ -5,6 +5,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require("mongodb");
+const fs = require("fs");
 
 const uri = "mongodb://localhost:27017/common-consultancy";
 const client = new MongoClient(uri, { useUnifiedTopology: true });
@@ -28,43 +29,34 @@ client.connect()
             res.send('It works!')
         });
 
-        app.get('/denmark', (req, res) => {
-            const query = {country: "Denmark"}
-
-            sourcepop.find(query).toArray((err, results) => {
-                if (err) {
-                    console.error("Failed to execute query:", err);
-                    return res.status(500).json({ error: "Internal Server Error" });
-                }
-
-                res.send(results);
-                res.status(200).json(results);
-            });
+        app.get('/denmarkID', async (req, res) => {
+            const query = { country: "Denmark" };
+            const projection = { projection: { ccpageid: 1, _id: 0 } };
+            const results = await sourcepop.find(query, projection).toArray();
+            res.send(results);
         });
 
-        app.get('/restofworld', (req, res) => {
+        app.get('/restofworldID', async (req, res) => {
             const query = { country: { $ne: "Denmark" } };
-
-            sourcepop.find(query).toArray((err, results) => {
-                if (err) {
-                    console.error("Failed to execute query:", err);
-                    return res.status(500).json({ error: "Internal Server Error" });
-                }
-
-                console.log(results);
-                res.status(200).json(results);
-            });
+            const projection = { projection: { ccpageid: 1, _id: 0 } };
+            const results = await sourcepop.find(query, projection).toArray();
+            res.send(results);
         });
 
+        app.get('/denmarkID/reactions', async (req, res) => {
+                const sourcepopQuery = {country: "Denmark"};
+                const sourcepopProjection = {projection: {ccpageid: 1, _id: 0}};
+                const sourcepopResults = await sourcepop.find(sourcepopQuery, sourcepopProjection).toArray();
+                const ccpageids = sourcepopResults.map(doc => doc.ccpageid);
 
-        app.get('/', (req, res) => {
-            res.send('It works!')
+            const metricsQuery = { ccpageid: { $in: ccpageids }, reactions: { $gt: 100 } };
+            const metricsProjection = { projection: { reactions: 1, ccpageid: 1, _id: 0 } };
+            const metricsResults = await metrics.find(metricsQuery, metricsProjection).toArray();
+            res.send(metricsResults)
         });
 
-        // Start the server
         app.listen(3000, () => {
             console.log('Server is running on port 3000');
         });
     })
     .catch(error => console.error('Failed to connect to MongoDB', error));
-
