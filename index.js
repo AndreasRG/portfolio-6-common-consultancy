@@ -44,10 +44,10 @@ client.connect()
         });
 
         app.get('/denmarkID/reactions', async (req, res) => {
-                const sourcepopQuery = {country: "Denmark"};
-                const sourcepopProjection = {projection: {ccpageid: 1, _id: 0}};
-                const sourcepopResults = await sourcepop.find(sourcepopQuery, sourcepopProjection).toArray();
-                const ccpageids = sourcepopResults.map(doc => doc.ccpageid);
+            const sourcepopQuery = {country: "Denmark"};
+            const sourcepopProjection = {projection: {ccpageid: 1, _id: 0}};
+            const sourcepopResults = await sourcepop.find(sourcepopQuery, sourcepopProjection).toArray();
+            const ccpageids = sourcepopResults.map(doc => doc.ccpageid);
 
             const metricsQuery = { ccpageid: { $in: ccpageids }, reactions: { $gt: 100 } };
             const metricsProjection = { projection: { reactions: 1, ccpageid: 1, _id: 0 } };
