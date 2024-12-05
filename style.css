@@ -4,10 +4,11 @@ body {
 #section1{
     background-color: white;
 }
+#canvas1div{
+    height: 600px;
+    width: 800px;
+}
 #postCountChart {
     display: block;
     border: 2px black solid;
-    height: 600px;
-    width: 800px;
-    margin: 0 0 0 0;
 }
