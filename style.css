@@ -11,4 +11,5 @@ body {
 #postCountChart {
     display: block;
     border: 2px black solid;
+    height: 600px;
 }

@@ -69,7 +69,7 @@ client.connect()
                         }
                         },
                         {
-                            $sort: { _id: 1 } // Optional: Sort results by yearquarter
+                            $sort: { _id: 1 }
                         }
                     ];
 
@@ -81,9 +81,42 @@ client.connect()
             }
         });
 
+        //Count of posts per yearquarter in Denmark
+        app.get('/postcount/denmark/yearquarter', async (req, res) => {
+            try {
+                const denmarkDocs = await sourcepop.find({ country: "Denmark" }).toArray();
+                const ccpageids = denmarkDocs.map(doc => doc.ccpageid);
+
+                const metricsDocs = await metrics.find({ ccpageid: { $in: ccpageids } }).toArray();
+                const ccpostIds = metricsDocs.map(doc => doc.ccpost_id);
+
+                const pipeline = [
+                    {
+                        $match: { ccpost_id: { $in: ccpostIds } }
+                    },
+                    {
+                        $group: {
+                            _id: "$yearquarter",
+                            count: { $sum: 1 }
+                        }
+                    },
+                    {
+                        $sort: { _id: 1 }
+                    }
+                ];
+
+                const results = await time.aggregate(pipeline).toArray();
+                res.status(200).json(results);
+            } catch (err) {
+                console.error("Failed to execute aggregation:", err);
+                res.status(500).json({ error: "Internal Server Error" });
+            }
+        });
 
 
-            app.listen(3000, () => {
+
+
+        app.listen(3000, () => {
             console.log('Server is running on port 3000');
         });
     })
