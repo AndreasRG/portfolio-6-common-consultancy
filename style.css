@@ -1,1 +1,13 @@
-body {background-color: coral;}
+body {
+    background-color: coral;
+}
+#section1{
+    background-color: white;
+}
+#postCountChart {
+    display: block;
+    border: 2px black solid;
+    height: 600px;
+    width: 800px;
+    margin: 0 0 0 0;
+}
