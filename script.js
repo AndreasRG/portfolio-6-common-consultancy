@@ -1,57 +1,32 @@
 
-//First visualisation:
-
-// Get the context of the canvas element we want to select
-async function fetchData() {
+//Section 2 canvas:
+async function fetchData(endpoint, canvasId, chartLabel, backgroundColor, borderColor) {
     try {
-        // Fetch data from both endpoints
-        const response1 = await fetch('http://localhost:3000/postcount/yearquarter');
-        const response2 = await fetch('http://localhost:3000/postcount/denmark/yearquarter');
-
-        if (!response1.ok || !response2.ok) {
-            throw new Error(`HTTP error! Status: ${response1.status}, ${response2.status}`);
+        const response = await fetch(`http://localhost:3000/${endpoint}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
-        const data1 = await response1.json();
-        const data2 = await response2.json();
+        const data = await response.json();
 
         // Transform data into labels and datasets for Chart.js
-        const labels = [...new Set([...data1.map(item => item._id), ...data2.map(item => item._id)])].sort();
-
-        const counts1 = labels.map(label => {
-            const item = data1.find(d => d._id === label);
-            return item ? item.count : 0;
-        });
-
-        const counts2 = labels.map(label => {
-            const item = data2.find(d => d._id === label);
-            return item ? item.count : 0;
-        });
+        const labels = data.map(item => item._id.yearquarter || item._id);
+        const counts = data.map(item => item.count);
 
         // Get the context of the canvas element we want to select
-        const ctx = document.getElementById('postCountChart').getContext('2d');
+        const ctx = document.getElementById(canvasId).getContext('2d');
 
         // Create the chart
         new Chart(ctx, {
             type: 'bar', // Change this to 'line', 'pie', etc., if needed
             data: {
                 labels: labels,
-                datasets: [
-                    {
-                        label: 'Posts by Year-Quarter (All)',
-                        data: counts1,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Posts by Year-Quarter (Denmark)',
-                        data: counts2,
-                        backgroundColor: 'rgba(192, 75, 75, 0.2)',
-                        borderColor: 'rgba(192, 75, 75, 1)',
-                        borderWidth: 1
-                    }
-                ]
+                datasets: [{
+                    label: chartLabel,
+                    data: counts,
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    borderWidth: 1
+                }]
             },
             options: {
                 scales: {
@@ -67,4 +42,132 @@ async function fetchData() {
 }
 
 // Fetch data and create the chart on page load
-fetchData();
+fetchData('postcount/yearquarter', 'postCountChartWorld', 'Posts by Year-Quarter (World)', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)');
+fetchData('postcount/denmark/yearquarter', 'postCountChartDenmark', 'Posts by Year-Quarter (Denmark)', 'rgba(192, 75, 75, 0.2)', 'rgba(192, 75, 75, 1)');
+
+
+async function fetchCategoryData(endpoint, canvasId, chartLabel, backgroundColor, borderColor) {
+    try {
+        const response = await fetch(`http://localhost:3000/${endpoint}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Transform data into labels and datasets for Chart.js
+        const labels = [...new Set(data.map(item => item._id.yearquarter))];
+        const categories = [...new Set(data.map(item => item._id.category))];
+
+        const categoryColors = {
+            'Category1': 'rgba(255, 99, 132, 0.2)',
+            'Category2': 'rgba(54, 162, 235, 0.2)',
+            'Category3': 'rgba(75, 192, 192, 0.2)',
+            'Category4': 'rgba(153, 102, 255, 0.2)',
+            'Category5': 'rgba(140,64,255,0.2)',
+            'Category6': 'rgba(255, 206, 86, 0.2)'
+        };
+
+        const datasets = categories.map(category => {
+            return {
+                label: category,
+                data: labels.map(label => {
+                    const item = data.find(d => d._id.yearquarter === label && d._id.category === category);
+                    return item ? item.count : 0;
+                }),
+                backgroundColor: categoryColors[category] || 'rgba(0, 0, 0, 0.2)',
+                borderColor: categoryColors[category] || 'rgba(0, 0, 0, 1)',
+                borderWidth: 1
+            };
+        });
+
+        // Get the context of the canvas element we want to select
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        // Create the chart
+        new Chart(ctx, {
+            type: 'bar', // Change this to 'line', 'pie', etc., if needed
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        stacked: true
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+// Fetch data and create the chart on page load
+fetchCategoryData('postcount/world/yearquarter/category', 'categoryCountChartWorld', 'Posts by Year-Quarter (World)', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)');
+
+async function fetchCategoryData(endpoint, canvasId, chartLabel, backgroundColor, borderColor) {
+    try {
+        const response = await fetch(`http://localhost:3000/${endpoint}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Transform data into labels and datasets for Chart.js
+        const labels = [...new Set(data.map(item => item._id.yearquarter))];
+        const categories = [...new Set(data.map(item => item._id.category))];
+
+        const categoryColors = {
+            'Category1': 'rgba(255, 99, 132, 0.2)',
+            'Category2': 'rgba(54, 162, 235, 0.2)',
+            'Category3': 'rgba(75, 192, 192, 0.2)',
+            'Category4': 'rgba(153, 102, 255, 0.2)',
+            'Category5': 'rgba(46,160,124,0.2)',
+            'Category6': 'rgba(168,86,255,0.2)'
+        };
+
+        const datasets = categories.map(category => {
+            return {
+                label: category,
+                data: labels.map(label => {
+                    const item = data.find(d => d._id.yearquarter === label && d._id.category === category);
+                    return item ? item.count : 0;
+                }),
+                backgroundColor: categoryColors[category] || 'rgba(128,32,143,0.2)',
+                borderColor: categoryColors[category] || 'rgb(165,21,21)',
+                borderWidth: 1
+            };
+        });
+
+        // Get the context of the canvas element we want to select
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        // Create the chart
+        new Chart(ctx, {
+            type: 'bar', // Change this to 'line', 'pie', etc., if needed
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        stacked: false
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+// Fetch data and create the chart on page load
+fetchCategoryData('postcount/denmark/yearquarter/category', 'categoryCountChartDenmark', 'Posts by Year-Quarter (Denmark)', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)');

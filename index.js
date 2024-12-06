@@ -63,15 +63,18 @@ client.connect()
             try {
                 const pipeline = [
                     {
+                        $match: { yearquarter: { $gt: "2022Q1" } }
+                    },
+                    {
                         $group: {
                             _id: "$yearquarter",
                             count: { $sum: 1 }
                         }
-                        },
-                        {
-                            $sort: { _id: 1 }
-                        }
-                    ];
+                    },
+                    {
+                        $sort: { _id: 1 }
+                    }
+                ];
 
                 const results = await time.aggregate(pipeline).toArray();
                 res.status(200).json(results);
@@ -95,6 +98,9 @@ client.connect()
                         $match: { ccpost_id: { $in: ccpostIds } }
                     },
                     {
+                        $match: { yearquarter: { $gt: "2022Q1" } }
+                    },
+                    {
                         $group: {
                             _id: "$yearquarter",
                             count: { $sum: 1 }
@@ -113,7 +119,119 @@ client.connect()
             }
         });
 
+        app.get('/postcount/world/yearquarter/category', async (req, res) => {
+            try {
+                // Step 1: Get all ccpageid and corresponding category from sourcepop
+                const sourcepopData = await sourcepop.find({}).project({ ccpageid: 1, category: 1, _id: 0 }).toArray();
+                const ccpageidToCategory = sourcepopData.reduce((acc, item) => {
+                    acc[item.ccpageid] = item.category;
+                    return acc;
+                }, {});
 
+                // Step 2: Find corresponding ccpost_id via ccpageid in metrics
+                const ccpageids = sourcepopData.map(item => item.ccpageid);
+                const metricsData = await metrics.find({ ccpageid: { $in: ccpageids } }).project({ ccpageid: 1, ccpost_id: 1, _id: 0 }).toArray();
+                const ccpost_idToCategory = metricsData.reduce((acc, item) => {
+                    const category = ccpageidToCategory[item.ccpageid];
+                    if (category) {
+                        acc[item.ccpost_id] = category;
+                    }
+                    return acc;
+                }, {});
+
+                // Step 3: Find yearquarter in time collection using ccpost_id
+                const ccpost_ids = metricsData.map(item => item.ccpost_id);
+                const timeData = await time.find({ ccpost_id: { $in: ccpost_ids }, yearquarter: { $gt: "2022Q1" } }).project({ yearquarter: 1, ccpost_id: 1, _id: 0 }).toArray();
+
+                // Step 4: Count posts per yearquarter grouped by category
+                const results = timeData.reduce((acc, item) => {
+                    const category = ccpost_idToCategory[item.ccpost_id];
+                    if (category) {
+                        const key = `${item.yearquarter}_${category}`;
+                        acc[key] = (acc[key] || 0) + 1;
+                    }
+                    return acc;
+                }, {});
+
+                // Transform results into the desired format
+                const formattedResults = Object.keys(results).map(key => {
+                    const [yearquarter, category] = key.split('_');
+                    return {
+                        _id: { yearquarter, category },
+                        count: results[key]
+                    };
+                });
+
+                // Sort the results by yearquarter
+                formattedResults.sort((a, b) => {
+                    if (a._id.yearquarter < b._id.yearquarter) return -1;
+                    if (a._id.yearquarter > b._id.yearquarter) return 1;
+                    return 0;
+                });
+
+                res.status(200).json(formattedResults);
+            } catch (err) {
+                console.error("Failed to execute aggregation:", err);
+                res.status(500).json({ error: "Internal Server Error" });
+            }
+        });
+
+        app.get('/postcount/denmark/yearquarter/category', async (req, res) => {
+            try {
+                // Step 1: Get all ccpageid and corresponding category from sourcepop where country is Denmark
+                const sourcepopData = await sourcepop.find({ country: "Denmark" }).project({ ccpageid: 1, category: 1, _id: 0 }).toArray();
+                const ccpageidToCategory = sourcepopData.reduce((acc, item) => {
+                    acc[item.ccpageid] = item.category;
+                    return acc;
+                }, {});
+
+                // Step 2: Find corresponding ccpost_id via ccpageid in metrics
+                const ccpageids = sourcepopData.map(item => item.ccpageid);
+                const metricsData = await metrics.find({ ccpageid: { $in: ccpageids } }).project({ ccpageid: 1, ccpost_id: 1, _id: 0 }).toArray();
+                const ccpost_idToCategory = metricsData.reduce((acc, item) => {
+                    const category = ccpageidToCategory[item.ccpageid];
+                    if (category) {
+                        acc[item.ccpost_id] = category;
+                    }
+                    return acc;
+                }, {});
+
+                // Step 3: Find yearquarter in time collection using ccpost_id
+                const ccpost_ids = metricsData.map(item => item.ccpost_id);
+                const timeData = await time.find({ ccpost_id: { $in: ccpost_ids }, yearquarter: { $gt: "2022Q1" } }).project({ yearquarter: 1, ccpost_id: 1, _id: 0 }).toArray();
+
+                // Step 4: Count posts per yearquarter grouped by category
+                const results = timeData.reduce((acc, item) => {
+                    const category = ccpost_idToCategory[item.ccpost_id];
+                    if (category) {
+                        const key = `${item.yearquarter}_${category}`;
+                        acc[key] = (acc[key] || 0) + 1;
+                    }
+                    return acc;
+                }, {});
+
+                // Transform results into the desired format
+                const formattedResults = Object.keys(results).map(key => {
+                    const [yearquarter, category] = key.split('_');
+                    return {
+                        _id: { yearquarter, category },
+                        count: results[key]
+                    };
+                });
+
+                // Sort the results by yearquarter
+                formattedResults.sort((a, b) => {
+                    if (a._id.yearquarter < b._id.yearquarter) return -1;
+                    if (a._id.yearquarter > b._id.yearquarter) return 1;
+                    return 0;
+                });
+
+                res.status(200).json(formattedResults);
+            } catch (err) {
+                console.error("Failed to execute aggregation:", err);
+                res.status(500).json({ error: "Internal Server Error" });
+            }
+        });
 
 
         app.listen(3000, () => {
