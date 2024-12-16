@@ -55,3 +55,20 @@ canvas {
     line-height: 1.8; /* Increase line spacing for readability */
 }
 
+
+#descriptionOfSection3 {
+    background-color: rgba(0, 0, 0, 0.7); /* Black background with transparency */
+    color: white; /* Text color for readability */
+    padding: 20px; /* Add space inside the box */
+    margin: 20px auto; /* Center align and add spacing around the section */
+    border-radius: 15px; /* Rounded corners */
+    max-width: 800px; /* Limit the width to make it more readable */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    text-align: justify; /* Make text more aligned for better readability */
+}
+
+#section3description  {
+    margin: 10px 0; /* Add space between paragraphs */
+    line-height: 1.8; /* Increase line spacing for readability */
+}
+
