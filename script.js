@@ -179,7 +179,7 @@ async function fetchCategoryData(endpoint, canvasId, chartLabel) {
 fetchCategoryData('postcount/denmark/yearquarter/category', 'categoryCountChartDenmark', 'Posts by Year-Quarter (Denmark)');
 
 // Function to fetch data and create the chart
-async function fetchForImodData(endpoint, canvasId, chartLabel) {
+async function fetchForImodData(endpoint, canvasId, chartLabel, chartTitle) {
     try {
         const response = await fetch(`http://localhost:3000/${endpoint}`);
         if (!response.ok) {
@@ -223,6 +223,17 @@ async function fetchForImodData(endpoint, canvasId, chartLabel) {
                     borderColor: borderColors.slice(0, counts.length),
                     borderWidth: 1
                 }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: chartTitle
+                    }
+                }
             }
         });
     } catch (error) {
@@ -231,5 +242,6 @@ async function fetchForImodData(endpoint, canvasId, chartLabel) {
 }
 
 // Fetch data and create the chart on page load
-fetchForImodData('postcount/forimod/2024q1', 'countforimoddenmark2024q1', 'Count for Imod (Denmark, 2024Q1)');
-fetchForImodData('postcount/forimod/2022q2', 'countforimoddenmark2022q2', 'Count for Imod (Denmark, 2022Q2)');
+fetchForImodData('postcount/forimod/2024q1', 'countforimoddenmark2024q1', 'Count for Imod (Denmark, 2024Q1)', 'Support count for Denmark (2024Q1)');
+fetchForImodData('postcount/forimod/2022q2', 'countforimoddenmark2022q2', 'Count for Imod (Denmark, 2022Q2)', 'Support count for Denmark (2022Q2)');
+

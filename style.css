@@ -9,7 +9,6 @@ body {
 }
 main {
     background-color: #092568;
-
     width: 79%;
 }
 h1{
@@ -24,34 +23,33 @@ p {
     font: lighter 25px/1.5 "calibri";
     color: white;
 }
-.hidden {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
 header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: black;
+    opacity: 90%;
 }
 section {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    background-color: white;
 }
-#section2title, #descriptionOfSection2, #section3title, #descriptionOfSection3, #section4title, #descriptionOfSection4 {
+#introductionText {
+    color: black;
+    font: italic 25px/1.5 "calibri";
+    padding: 40px 300px 40px 300px;
+}
+#section2title, #section3title,  #section4title {
     background-color: black;
     opacity: 70%;
+    margin: 100px 0 0 0;
 }
 #canvas1div, #canvas2div, #canvas3div, #canvas4div {
     height: 400px;
     width: 800px;
-    margin-bottom: 20px;
+    margin: 40px 0 40px 0;
 }
 canvas {
     display: block;
@@ -62,52 +60,14 @@ canvas {
     opacity: 90%;
 }
 
-#descriptionOfSection2 {
-    background-color: rgba(0, 0, 0, 0.7); /* Black background with transparency */
+#section2description, #section3description, #section4description, #section2description2, #section3description2, #section4description2 {
+    background-color: grey; /* Black background with transparency */
     color: white; /* Text color for readability */
-    padding: 20px; /* Add space inside the box */
-    margin: 20px auto; /* Center align and add spacing around the section */
-    border-radius: 15px; /* Rounded corners */
-    max-width: 800px; /* Limit the width to make it more readable */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
-    text-align: justify; /* Make text more aligned for better readability */
-}
-
-#section2description, #section2description2 {
-    margin: 10px 0; /* Add space between paragraphs */
+    padding: 40px 300px 40px 300px; /* Add space inside the box */
+    margin: 0 0 0 0; /* Add space between paragraphs */
     line-height: 1.8; /* Increase line spacing for readability */
-}
-
-
-#descriptionOfSection3 {
-    background-color: rgba(0, 0, 0, 0.7); /* Black background with transparency */
-    color: white; /* Text color for readability */
-    padding: 20px; /* Add space inside the box */
-    margin: 20px auto; /* Center align and add spacing around the section */
-    border-radius: 15px; /* Rounded corners */
-    max-width: 800px; /* Limit the width to make it more readable */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    display: flex;
+    flex-direction: column;
     text-align: justify; /* Make text more aligned for better readability */
-}
-
-#section3description  {
-    margin: 10px 0; /* Add space between paragraphs */
-    line-height: 1.8; /* Increase line spacing for readability */
-}
-
-
-#descriptionOfSection4 {
-    background-color: rgba(0, 0, 0, 0.7); /* Black background with transparency */
-    color: white; /* Text color for readability */
-    padding: 20px; /* Add space inside the box */
-    margin: 20px auto; /* Center align and add spacing around the section */
-    border-radius: 15px; /* Rounded corners */
-    max-width: 800px; /* Limit the width to make it more readable */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
-    text-align: justify; /* Make text more aligned for better readability */
-}
-
-#section4description, #section4description2 {
-    margin: 10px 0; /* Add space between paragraphs */
-    line-height: 1.8; /* Increase line spacing for readability */
+    align-content: space-around;
 }
