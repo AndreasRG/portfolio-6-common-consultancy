@@ -235,6 +235,99 @@ client.connect()
         }
     });
 
+    app.get('/postcount/forimod/2022q2', async (req, res) => {
+        try {
+            // Step 1: Get all ccpost_id from 'time' collection where yearquarter is "2022Q2"
+            const postIds = await time.find({ yearquarter: "2022Q2" }, { ccpost_id: 1, _id: 0 }).toArray();
+            const ccpostIds = postIds.map(doc => doc.ccpost_id);
+            console.log('Step 1 - ccpostIds:', ccpostIds);
+
+            // Step 2: Get ccpageid from 'metrics' collection using ccpost_id
+            const metricsDocs = await metrics.find({ ccpost_id: { $in: ccpostIds } }, { ccpageid: 1, ccpost_id: 1, _id: 0 }).toArray();
+            const ccpageIds = metricsDocs.map(doc => doc.ccpageid);
+            console.log('Step 2 - ccpageIds from metrics:', ccpageIds);
+
+            // Step 3: Check the ccpageid in the 'sourcepop' collection for country "Denmark"
+            const sourcepopDocs = await sourcepop.find({ ccpageid: { $in: ccpageIds }, country: "Denmark" }, { ccpageid: 1, _id: 0 }).toArray();
+            const denmarkCcpageIds = sourcepopDocs.map(doc => doc.ccpageid);
+            console.log('Step 3 - Denmark ccpageIds:', denmarkCcpageIds);
+
+            // Step 4: Retain only those ccpost_id which correspond to the filtered ccpageid from metrics
+            const denmarkCcpostIds = metricsDocs.filter(doc => denmarkCcpageIds.includes(doc.ccpageid)).map(doc => doc.ccpost_id);
+            console.log('Step 4 - Denmark ccpostIds:', denmarkCcpostIds);
+
+            // Step 5: Count all entries in 'classification' collection where ccpost_id is in the collected IDs and group by gpt_ukraine_for_imod
+            const pipeline = [
+                {
+                    $match: { ccpost_id: { $in: denmarkCcpostIds } }
+                },
+                {
+                    $group: {
+                        _id: "$gpt_ukraine_for_imod",
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { _id: 1 }
+                }
+            ];
+
+            const results = await classification.aggregate(pipeline).toArray();
+            console.log('Step 5 - Aggregated Results:', results);
+
+            res.status(200).json(results);
+        } catch (err) {
+            console.error("Failed to execute aggregation:", err);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    });
+
+    app.get('/postcount/forimod/2024q1', async (req, res) => {
+        try {
+            // Step 1: Get all ccpost_id from 'time' collection where yearquarter is "2024Q1"
+            const postIds = await time.find({ yearquarter: "2024Q1" }, { ccpost_id: 1, _id: 0 }).toArray();
+            const ccpostIds = postIds.map(doc => doc.ccpost_id);
+            console.log('Step 1 - ccpostIds:', ccpostIds);
+
+            // Step 2: Get ccpageid from 'metrics' collection using ccpost_id
+            const metricsDocs = await metrics.find({ ccpost_id: { $in: ccpostIds } }, { ccpageid: 1, ccpost_id: 1, _id: 0 }).toArray();
+            const ccpageIds = metricsDocs.map(doc => doc.ccpageid);
+            console.log('Step 2 - ccpageIds from metrics:', ccpageIds);
+
+            // Step 3: Check the ccpageid in the 'sourcepop' collection for country "Denmark"
+            const sourcepopDocs = await sourcepop.find({ ccpageid: { $in: ccpageIds }, country: "Denmark" }, { ccpageid: 1, _id: 0 }).toArray();
+            const denmarkCcpageIds = sourcepopDocs.map(doc => doc.ccpageid);
+            console.log('Step 3 - Denmark ccpageIds:', denmarkCcpageIds);
+
+            // Step 4: Retain only those ccpost_id which correspond to the filtered ccpageid from metrics
+            const denmarkCcpostIds = metricsDocs.filter(doc => denmarkCcpageIds.includes(doc.ccpageid)).map(doc => doc.ccpost_id);
+            console.log('Step 4 - Denmark ccpostIds:', denmarkCcpostIds);
+
+            // Step 5: Count all entries in 'classification' collection where ccpost_id is in the collected IDs and group by gpt_ukraine_for_imod
+            const pipeline = [
+                {
+                    $match: { ccpost_id: { $in: denmarkCcpostIds } }
+                },
+                {
+                    $group: {
+                        _id: "$gpt_ukraine_for_imod",
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { _id: 1 }
+                }
+            ];
+
+            const results = await classification.aggregate(pipeline).toArray();
+            console.log('Step 5 - Aggregated Results:', results);
+
+            res.status(200).json(results);
+        } catch (err) {
+            console.error("Failed to execute aggregation:", err);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    });
 
     app.listen(3000, () => {
         console.log('Server is running on port 3000');

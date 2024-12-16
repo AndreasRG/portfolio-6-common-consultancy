@@ -177,3 +177,59 @@ async function fetchCategoryData(endpoint, canvasId, chartLabel) {
 
 // Fetch data and create the chart on page load
 fetchCategoryData('postcount/denmark/yearquarter/category', 'categoryCountChartDenmark', 'Posts by Year-Quarter (Denmark)');
+
+// Function to fetch data and create the chart
+async function fetchForImodData(endpoint, canvasId, chartLabel) {
+    try {
+        const response = await fetch(`http://localhost:3000/${endpoint}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Transform data into labels and datasets for Chart.js
+        const labels = data.map(item => item._id); // Assuming _id contains the values of gpt_ukraine_for_imod
+        const counts = data.map(item => item.count);
+
+        // Define colors for the pie chart
+        const backgroundColors = [
+            'rgba(123, 104, 238, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)'
+        ];
+
+        const borderColors = [
+            'rgba(123, 104, 238, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)'
+        ];
+
+        // Get the context of the canvas element we want to select
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        // Create the chart
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: chartLabel,
+                    data: counts,
+                    backgroundColor: backgroundColors.slice(0, counts.length),
+                    borderColor: borderColors.slice(0, counts.length),
+                    borderWidth: 1
+                }]
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+// Fetch data and create the chart on page load
+fetchForImodData('postcount/forimod/2024q1', 'countforimoddenmark2024q1', 'Count for Imod (Denmark, 2024Q1)');
+fetchForImodData('postcount/forimod/2022q2', 'countforimoddenmark2022q2', 'Count for Imod (Denmark, 2022Q2)');
