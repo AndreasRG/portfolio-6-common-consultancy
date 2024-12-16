@@ -1,8 +1,16 @@
 body {
-    background: linear-gradient(to bottom, blue, yellow);
+    background: #081e4f;
     background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+main {
+    background-color: #092568;
+
+    width: 79%;
 }
 h1{
     font: bold 40px/1.5 "calibri";
