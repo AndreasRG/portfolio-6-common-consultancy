@@ -1,74 +1,43 @@
+
 body {
-    background-color: coral;
-}
-h1{
-    font: bold 40px/1.5 "calibri";
-    color: white;
-}
-h2 {
-    font: bold 30px/1.5 "calibri";
-    color: white;
-}
-p {
-    font: lighter 25px/1.5 "calibri";
-    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background: linear-gradient(to bottom, #0057B7, #FFD700);
+    color: #333;
 }
 header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    color: #fff;
 }
-section {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
+h1 {
+    font-size: 5em;
+    margin: 0;
 }
-#section2title, #descriptionOfSection2, #section3title, #descriptionOfSection3 {
-    background-color: black;
-    opacity: 70%;
-}
-#canvas1div, #canvas2div, #canvas3div, #canvas4div {
-    height: 400px;
-    width: 800px;
-    margin-bottom: 20px;
-}
-canvas {
-    display: block;
-    border: 2px black solid;
-    height: 100%;
-    width: 100%;
-}
+p {
+    margin: 50px 0;
+    font-size: 1.2em;
 
-#descriptionOfSection2 {
-    background-color: rgba(0, 0, 0, 0.7); /* Black background with transparency */
-    color: white; /* Text color for readability */
-    padding: 20px; /* Add space inside the box */
-    margin: 20px auto; /* Center align and add spacing around the section */
-    border-radius: 15px; /* Rounded corners */
-    max-width: 800px; /* Limit the width to make it more readable */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
-    text-align: justify; /* Make text more aligned for better readability */
 }
-
-#section2description, #section2description2 {
-    margin: 10px 0; /* Add space between paragraphs */
-    line-height: 1.8; /* Increase line spacing for readability */
+.button {
+    display: inline-block;
+    margin: 62px auto;
+    padding: 15px 26px;
+    font-size: 1.2em;
+    color: #fff;
+    background-color: #0057B7;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
 }
-
-
-#descriptionOfSection3 {
-    background-color: rgba(0, 0, 0, 0.7); /* Black background with transparency */
-    color: white; /* Text color for readability */
-    padding: 20px; /* Add space inside the box */
-    margin: 20px auto; /* Center align and add spacing around the section */
-    border-radius: 15px; /* Rounded corners */
-    max-width: 800px; /* Limit the width to make it more readable */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
-    text-align: justify; /* Make text more aligned for better readability */
+.button:hover {
+    background-color: #003f88;
 }
-
-#section3description  {
-    margin: 10px 0; /* Add space between paragraphs */
-    line-height: 1.8; /* Increase line spacing for readability */
+footer {
+    margin-top: 525px;
+    font-size: 0.9em;
+    color: #fff;
 }
-

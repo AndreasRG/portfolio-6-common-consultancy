@@ -1,4 +1,3 @@
-
 //Section 2 canvas:
 async function fetchData(endpoint, canvasId, chartLabel, backgroundColor, borderColor) {
     try {
